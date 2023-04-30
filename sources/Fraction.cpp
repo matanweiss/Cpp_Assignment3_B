@@ -177,11 +177,54 @@ bool Fraction::operator>=(float number)
         return true;
     return false;
 }
-bool Fraction::operator<=(float) { return false; }
-bool operator<=(float number, const Fraction &fraction) { return false; }
-bool operator>=(float number, const Fraction &fraction) { return false; }
-bool operator<(float number, const Fraction &fraction) { return false; }
-bool operator>(float number, const Fraction &fraction) { return false; }
-bool Fraction::operator==(const Fraction &fraction) const { return false; }
-bool Fraction::operator==(float number) { return false; }
-bool operator==(float number, const Fraction &fraction) { return false; }
+bool Fraction::operator<=(float number)
+{
+    Fraction f(number * 1000, 1000);
+    if (compareTo(f) <= 0)
+        return true;
+    return false;
+}
+bool operator<=(float number, const Fraction &fraction)
+{
+    Fraction f(number * 1000, 1000);
+    if (fraction.compareTo(f) >= 0)
+        return true;
+    return false;
+}
+bool operator>=(float number, const Fraction &fraction)
+{
+    Fraction f(number * 1000, 1000);
+    if (fraction.compareTo(f) <= 0)
+        return true;
+    return false;
+}
+bool operator<(float number, const Fraction &fraction)
+{
+    Fraction f(number * 1000, 1000);
+    if (fraction.compareTo(f) > 0)
+        return true;
+    return false;
+}
+bool operator>(float number, const Fraction &fraction)
+{
+    Fraction f(number * 1000, 1000);
+    if (fraction.compareTo(f) < 0)
+        return true;
+    return false;
+}
+bool Fraction::operator==(const Fraction &fraction) const
+{
+    if (numerator == fraction.numerator && denominator == fraction.denominator)
+        return true;
+    return false;
+}
+bool Fraction::operator==(float number)
+{
+    Fraction f(number * 1000, 1000);
+    return f == *this;
+}
+bool operator==(float number, const Fraction &fraction)
+{
+    Fraction f(number * 1000, 1000);
+    return f == fraction;
+}
