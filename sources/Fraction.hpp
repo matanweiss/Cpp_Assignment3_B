@@ -13,8 +13,12 @@ class Fraction
 
 public:
     Fraction();
+    Fraction(float);
     Fraction(int, int);
+    int getNumerator();
+    int getDenominator();
     void reduce();
+    void handleMinus();
     int compareTo(const Fraction &) const;
     friend std::ostream &operator<<(std::ostream &, const Fraction &);
     friend std::istream &operator>>(std::istream &, Fraction &);

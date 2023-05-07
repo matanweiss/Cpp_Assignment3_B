@@ -2,6 +2,13 @@
 
 // constructors
 Fraction::Fraction() : numerator(1), denominator(1) {}
+Fraction::Fraction(float number)
+{
+    numerator = number * 1000;
+    denominator = 1000;
+    reduce();
+}
+
 Fraction::Fraction(int number1, int number2) : numerator(number1), denominator(number2)
 {
     if (!number2)
@@ -15,7 +22,18 @@ void Fraction::reduce()
     int gcd = std::gcd(numerator, denominator);
     numerator /= gcd;
     denominator /= gcd;
+    handleMinus();
 }
+
+void Fraction::handleMinus()
+{
+    if (denominator < 0)
+    {
+        numerator = -numerator;
+        denominator = -denominator;
+    }
+}
+
 int Fraction::compareTo(const Fraction &other) const
 {
     int numeratorL = numerator * other.denominator;
@@ -27,7 +45,14 @@ int Fraction::compareTo(const Fraction &other) const
     else
         return 0;
 }
-
+int Fraction::getNumerator()
+{
+    return numerator;
+}
+int Fraction::getDenominator()
+{
+    return denominator;
+}
 // cout & cin
 std::ostream &operator<<(std::ostream &stream, const Fraction &fraction)
 {
@@ -36,10 +61,18 @@ std::ostream &operator<<(std::ostream &stream, const Fraction &fraction)
 }
 std::istream &operator>>(std::istream &stream, Fraction &fraction)
 {
+    if (stream.peek() == EOF)
+    {
+        throw std::runtime_error("wrong number of arguments");
+    }
     stream >> fraction.numerator;
+    if (stream.peek() == EOF)
+    {
+        throw std::runtime_error("wrong number of arguments");
+    }
     stream >> fraction.denominator;
     if (!fraction.denominator)
-        throw std::invalid_argument("received zero denominator");
+        throw std::runtime_error("received zero denominator");
     fraction.reduce();
     return stream;
 }
@@ -173,7 +206,8 @@ bool Fraction::operator<(float number)
 bool Fraction::operator>=(float number)
 {
     Fraction f(number * 1000, 1000);
-    if (compareTo(f) <= 0)
+    printf("result of >= is %d\n", compareTo(f));
+    if (compareTo(f) >= 0)
         return true;
     return false;
 }
