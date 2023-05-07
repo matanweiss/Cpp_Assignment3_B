@@ -33,6 +33,11 @@ void Fraction::handleMinus()
         denominator = -denominator;
     }
 }
+void Fraction::checkOverflow(long long numeratorResult, long long denominatorResult)
+{
+    if (numeratorResult < INT_MIN || INT_MAX < numeratorResult || denominatorResult < INT_MIN || INT_MAX < denominatorResult)
+        throw std::overflow_error("result overflows");
+}
 
 int Fraction::compareTo(const Fraction &other) const
 {
@@ -80,25 +85,33 @@ std::istream &operator>>(std::istream &stream, Fraction &fraction)
 // arithmetic
 Fraction Fraction::operator+(const Fraction &other)
 {
-    int numeratorL = numerator * other.denominator;
-    int denominatorLR = denominator * other.denominator;
-    int numeratorR = other.numerator * denominator;
-    return Fraction(numeratorL + numeratorR, denominatorLR);
+    long long numeratorResult = (long long)numerator * other.denominator + (long long)other.numerator * denominator;
+    long long denominatorResult = (long long)denominator * other.denominator;
+    checkOverflow(numeratorResult, denominatorResult);
+    return Fraction((int)numeratorResult, (int)denominatorResult);
 }
 Fraction Fraction::operator-(const Fraction &other)
 {
-    int numeratorL = numerator * other.denominator;
-    int denominatorLR = denominator * other.denominator;
-    int numeratorR = other.numerator * denominator;
-    return Fraction(numeratorL - numeratorR, denominatorLR);
+    long long numeratorResult = (long long)numerator * other.denominator - (long long)other.numerator * denominator;
+    long long denominatorResult = (long long)denominator * other.denominator;
+    checkOverflow(numeratorResult, denominatorResult);
+    return Fraction((int)numeratorResult, (int)denominatorResult);
 }
 Fraction Fraction::operator/(const Fraction &other)
 {
-    return Fraction(numerator * other.denominator, denominator * other.numerator);
+    if (!other.numerator)
+        throw std::runtime_error("division by zero");
+    long long numeratorResult = (long long)numerator * other.denominator;
+    long long denominatorResult = (long long)other.numerator * denominator;
+    checkOverflow(numeratorResult, denominatorResult);
+    return Fraction((int)numeratorResult, (int)denominatorResult);
 }
 Fraction Fraction::operator*(const Fraction &other)
 {
-    return Fraction(numerator * other.numerator, denominator * other.denominator);
+    long long numeratorResult = (long long)numerator * other.numerator;
+    long long denominatorResult = (long long)denominator * other.denominator;
+    checkOverflow(numeratorResult, denominatorResult);
+    return Fraction((int)numeratorResult, (int)denominatorResult);
 }
 
 Fraction operator*(float number, const Fraction &other)
@@ -113,6 +126,8 @@ Fraction operator-(float number, const Fraction &other)
 }
 Fraction operator/(float number, const Fraction &other)
 {
+    if (!other.numerator)
+        throw std::runtime_error("division by zero");
     Fraction f(number * 1000, 1000);
     return f / other;
 }
@@ -139,6 +154,8 @@ Fraction Fraction::operator*(float number)
 }
 Fraction Fraction::operator/(float number)
 {
+    if (!number)
+        throw std::runtime_error("division by zero");
     Fraction f(number * 1000, 1000);
     return *this / f;
 }

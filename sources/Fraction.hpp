@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <numeric>
+#include <limits.h>
 
 namespace ariel
 {
@@ -19,6 +20,7 @@ public:
     int getDenominator();
     void reduce();
     void handleMinus();
+    void checkOverflow(long long, long long);
     int compareTo(const Fraction &) const;
     friend std::ostream &operator<<(std::ostream &, const Fraction &);
     friend std::istream &operator>>(std::istream &, Fraction &);
